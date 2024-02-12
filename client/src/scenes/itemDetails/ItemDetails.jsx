@@ -10,7 +10,10 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { shades } from "../../theme";
 import { addToCart } from "../../state";
 import { useDispatch } from "react-redux";
+import useFetch from "../../hooks/useFetch";
 
+const API_URL = process.env.REACT_APP_API_URL;
+const UPLOAD_URL = process.env.REACT_APP_UPLOAD_URL;
 const ItemDetails = () => {
   const dispatch = useDispatch();
   const { itemId } = useParams();
@@ -19,36 +22,63 @@ const ItemDetails = () => {
   const [item, setItem] = useState(null);
   const [items, setItems] = useState([]);
 
+  // Fetch item and items details using useFetch or fetch
+  const {
+    data: itemData,
+    loading: itemLoading,
+    error: itemError,
+  } = useFetch(`${API_URL}items/${itemId}?populate=image`);
+  const {
+    data: itemsData,
+    loading: itemsLoading,
+    error: itemsError,
+  } = useFetch(`${API_URL}items?populate=image`);
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  async function getItem() {
-    const item = await fetch(
-      `http://localhost:2000/api/items/${itemId}?populate=image`,
-      {
-        method: "GET",
-      }
-    );
-    const itemJson = await item.json();
-    setItem(itemJson.data);
-  }
+  // async function getItem() {
+  //   const item = await fetch(
+  //     `http://localhost:1337/api/items/${itemId}?populate=image`,
+  //     {
+  //       method: "GET",
+  //     }
+  //   );
+  //   const itemJson = await item.json();
+  //   setItem(itemJson.data);
+  // }
 
-  async function getItems() {
-    const items = await fetch(
-      `http://localhost:2000/api/items?populate=image`,
-      {
-        method: "GET",
-      }
-    );
-    const itemsJson = await items.json();
-    setItems(itemsJson.data);
-  }
+  // async function getItems() {
+  //   const items = await fetch(
+  //     `http://localhost:1337/api/items?populate=image`,
+  //     {
+  //       method: "GET",
+  //     }
+  //   );
+  //   const itemsJson = await items.json();
+  //   setItems(itemsJson.data);
+  // }
 
   useEffect(() => {
-    getItem();
-    getItems();
+    // getItem();
+    // getItems();
   }, [itemId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Set items after fetching if not using useFetch
+  useEffect(() => {
+    if (itemData) setItem(itemData);
+    if (itemsData) setItems(itemsData);
+  }, [itemData, itemsData]);
+
+  // Handle loading and error states for item and items
+  if (itemLoading || itemsLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (itemError || itemsError) {
+    return <div>Error fetching data</div>;
+  }
 
   return (
     <Box width="80%" m="80px auto">
@@ -59,7 +89,7 @@ const ItemDetails = () => {
             alt={item?.name}
             width="100%"
             height="100%"
-            src={`http://localhost:2000${item?.attributes?.image?.data?.attributes?.formats?.medium?.url}`}
+            src={`${UPLOAD_URL}${item?.attributes?.image?.data?.attributes?.formats?.medium?.url}`}
             style={{ objectFit: "contain" }}
           />
         </Box>
@@ -73,7 +103,7 @@ const ItemDetails = () => {
 
           <Box m="65px 0 25px 0">
             <Typography variant="h3">{item?.attributes?.name}</Typography>
-            <Typography>${item?.attributes?.price}</Typography>
+            <Typography>৳ {item?.attributes?.price}</Typography>
             <Typography sx={{ mt: "20px" }}>
               {item?.attributes?.longDescription}
             </Typography>

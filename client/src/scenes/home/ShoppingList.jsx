@@ -7,10 +7,12 @@ import { Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useDispatch, useSelector } from "react-redux";
 import { setItems } from "../../state";
+import useFetch from "../../hooks/useFetch";
 
 const ShoppingList = () => {
   const dispatch = useDispatch();
   const [value, setValue] = useState("all");
+  const { data, loading, error } = useFetch(`/items?populate=image`); // Use the hook to fetch items
   const items = useSelector((state) => state.cart.items);
   const breakPoint = useMediaQuery("(min-width:600px)");
 
@@ -18,18 +20,19 @@ const ShoppingList = () => {
     setValue(newValue);
   };
 
-  async function getItems() {
-    const items = await fetch(
-      "http://localhost:2000/api/items?populate=image",
-      { method: "GET" }
-    );
-    const itemsJson = await items.json();
-    dispatch(setItems(itemsJson.data));
+  useEffect(() => {
+    if (data) {
+      dispatch(setItems(data));
+    }
+  }, [data, dispatch]);
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
-  useEffect(() => {
-    getItems();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  if (error) {
+    return <div>Error fetching data</div>;
+  }
 
   const topRatedItems = items.filter(
     (item) => item.attributes.category === "topRated"

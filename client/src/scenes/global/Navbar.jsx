@@ -40,7 +40,7 @@ function Navbar() {
           sx={{ "&:hover": { cursor: "pointer" } }}
           color={shades.secondary[500]}
         >
-          ECOMMER
+          <img alt="" width="50px" src="/logo.png" />
         </Box>
         <Box
           display="flex"

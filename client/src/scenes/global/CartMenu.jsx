@@ -18,7 +18,7 @@ const FlexBox = styled(Box)`
   justify-content: space-between;
   align-items: center;
 `;
-
+const UPLOAD_URL = process.env.REACT_APP_UPLOAD_URL;
 const CartMenu = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -26,9 +26,9 @@ const CartMenu = () => {
   const isCartOpen = useSelector((state) => state.cart.isCartOpen);
 
   const totalPrice = cart.reduce((total, item) => {
+    console.log("check reducer", item);
     return total + item.count * item.attributes.price;
   }, 0);
-
   return (
     <Box
       display={isCartOpen ? "block" : "none"}
@@ -68,7 +68,7 @@ const CartMenu = () => {
                       alt={item?.name}
                       width="123px"
                       height="164px"
-                      src={`http://localhost:2000${item?.attributes?.image?.data?.attributes?.formats?.medium?.url}`}
+                      src={`${UPLOAD_URL}${item?.attributes?.image?.data?.attributes?.formats?.medium?.url}`}
                     />
                   </Box>
                   <Box flex="1 1 60%">
@@ -108,7 +108,7 @@ const CartMenu = () => {
                         </IconButton>
                       </Box>
                       <Typography fontWeight="bold">
-                        ${item.attributes.price}
+                        $ {item.attributes.price}
                       </Typography>
                     </FlexBox>
                   </Box>
@@ -122,7 +122,7 @@ const CartMenu = () => {
           <Box m="20px 0">
             <FlexBox m="20px 0">
               <Typography fontWeight="bold">SUBTOTAL</Typography>
-              <Typography fontWeight="bold">${totalPrice}</Typography>
+              <Typography fontWeight="bold">৳{totalPrice}</Typography>
             </FlexBox>
             <Button
               sx={{
