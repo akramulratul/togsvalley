@@ -127,11 +127,14 @@ const ItemDetails = () => {
             </Box>
             <Button
               sx={{
-                backgroundColor: "#222222",
                 color: "white",
                 borderRadius: 0,
                 minWidth: "150px",
                 padding: "10px 40px",
+                backgroundColor: "#1a754a",
+                "&:hover": {
+                  backgroundColor: "#2b8e5f", // Lighter green on hover
+                },
               }}
               onClick={() => dispatch(addToCart({ item: { ...item, count } }))}
             >

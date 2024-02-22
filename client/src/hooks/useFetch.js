@@ -5,7 +5,7 @@ const useFetch = (url) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
+  console.log("Image Data", data);
   useEffect(() => {
     const fetchData = async () => {
       try {

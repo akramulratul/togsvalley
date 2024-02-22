@@ -21,7 +21,7 @@ const Item = ({ item, width }) => {
   const {
     palette: { neutral },
   } = useTheme();
-
+  console.log("Data", item);
   const category = data?.attributes?.category ?? item?.attributes?.category;
   const price = data?.attributes?.price ?? item?.attributes?.price;
   const name = data?.attributes?.name ?? item?.attributes?.name;
@@ -29,7 +29,13 @@ const Item = ({ item, width }) => {
     data?.attributes?.image?.data?.attributes?.formats?.medium?.url ??
     item?.attributes?.image?.data?.attributes?.formats?.medium?.url
   }`;
-  // Handle loading and error states
+
+  const images = data?.attributes?.images?.data?.map(
+    (img) => `${UPLOAD_URL}${img.attributes.formats.medium.url}`
+  ) ?? [
+    `${UPLOAD_URL}${data?.attributes?.image?.data?.attributes?.formats?.medium?.url}`,
+  ];
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -37,21 +43,6 @@ const Item = ({ item, width }) => {
   if (error) {
     return <div>Error fetching data</div>;
   }
-  // const url =
-  //   image?.data?.attributes?.formats?.medium?.url ?? "defaultImageURL";
-
-  // const { category, price, name, image } = data
-  //   ? data.attributes
-  //   : item.attributes;
-  // const {
-  //   data: {
-  //     attributes: {
-  //       formats: {
-  //         medium: { url },
-  //       },
-  //     },
-  //   },
-  // } = image;
 
   return (
     <Box width={width}>
@@ -95,7 +86,13 @@ const Item = ({ item, width }) => {
               onClick={() => {
                 dispatch(addToCart({ item: { ...item, count } }));
               }}
-              sx={{ backgroundColor: shades.primary[300], color: "white" }}
+              sx={{
+                backgroundColor: shades.primary[300],
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#7e7e7e", // Lighter green on hover
+                },
+              }}
             >
               Add to Cart
             </Button>

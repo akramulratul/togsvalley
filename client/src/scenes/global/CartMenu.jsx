@@ -127,6 +127,9 @@ const CartMenu = () => {
             <Button
               sx={{
                 backgroundColor: shades.primary[400],
+                "&:hover": {
+                  backgroundColor: "#7e7e7e", // Lighter green on hover
+                },
                 color: "white",
                 borderRadius: 0,
                 minWidth: "100%",
