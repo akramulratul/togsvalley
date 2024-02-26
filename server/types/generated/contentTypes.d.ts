@@ -834,8 +834,8 @@ export interface ApiItemItem extends Schema.CollectionType {
     longDescription: Attribute.RichText;
     price: Attribute.Decimal;
     image: Attribute.Media;
-    category: Attribute.Enumeration<['newArrivals', 'bestSeller', 'topRated']>;
-    categories: Attribute.Relation<
+    featured: Attribute.Enumeration<['newArrivals', 'bestSeller', 'topRated']>;
+    category: Attribute.Relation<
       'api::item.item',
       'manyToMany',
       'api::category.category'
