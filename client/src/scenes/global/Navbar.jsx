@@ -43,7 +43,7 @@ function Navbar() {
 
     return (
         <div
-            className="flex justify-center relative pt-3 pb-5 w-full  bg-[rgba(255,255,255,0.95)]  top-0 left-0 z-[100]">
+            className="flex justify-center  relative pt-3 pb-5 w-full  bg-[rgba(255,255,255,0.95)]  top-0 left-0 z-[100]">
             <div
                 className="container w-full flex flex-col items-center">
                 <div className="flex px-5 lg:px-0 relative gap-x-5 items-center lg:justify-between w-full">

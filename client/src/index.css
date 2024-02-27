@@ -11,3 +11,6 @@
     font-family: "Fauna One", sans-serif !important;
 }
 
+.container {
+    @apply mx-auto;
+}

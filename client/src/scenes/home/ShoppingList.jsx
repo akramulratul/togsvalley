@@ -47,7 +47,7 @@ const ShoppingList = () => {
     return (
         <Box width="80%" margin="80px auto">
             <Typography textAlign="center" className="text-3xl">
-                Our Featured <b>Products</b>
+                Top Selling <b>Products</b>
             </Typography>
             <Tabs
                 textColor="primary"
