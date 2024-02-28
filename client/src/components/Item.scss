@@ -1,0 +1,13 @@
+.add-to-cart-hover {
+  @apply opacity-0 duration-150 ;
+}
+
+.add-to-cart-img:hover {
+  & + .add-to-cart-hover {
+    opacity: 1;
+  }
+}
+
+.add-to-cart-hover:hover {
+  opacity: 1;
+}
