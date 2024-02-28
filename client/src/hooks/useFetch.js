@@ -1,26 +1,26 @@
-import { useEffect, useState } from "react";
-import { makeRequest } from "../makeRequest";
+import {useEffect, useState} from "react";
+import {makeRequest} from "../makeRequest";
 
 const useFetch = (url) => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  console.log("Image Data", data);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const res = await makeRequest.get(url);
-        setData(res.data.data);
-      } catch (err) {
-        setError(true);
-      }
-      setLoading(false);
-    };
-    fetchData();
-  }, [url]);
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
 
-  return { data, loading, error };
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const res = await makeRequest.get(url);
+                setData(res.data.data);
+            } catch (err) {
+                setError(true);
+            }
+            setLoading(false);
+        };
+        fetchData();
+    }, [url]);
+
+    return {data, loading, error};
 };
 
 export default useFetch;

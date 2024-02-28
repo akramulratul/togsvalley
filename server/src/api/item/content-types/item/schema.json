@@ -35,7 +35,7 @@
         "audios"
       ]
     },
-    "category": {
+    "featured": {
       "type": "enumeration",
       "enum": [
         "newArrivals",
@@ -43,24 +43,25 @@
         "topRated"
       ]
     },
-    "categories": {
+    "category": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::category.category",
-      "mappedBy": "items"
+      "inversedBy": "items"
     },
     "AvailableProduct": {
       "type": "decimal"
     },
     "img": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos",
         "audios"
-      ],
-      "type": "media",
-      "multiple": true
+      ]
     }
   }
 }
