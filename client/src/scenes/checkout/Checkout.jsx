@@ -1,5 +1,5 @@
 import {useSelector} from "react-redux";
-import {Box, Step, StepLabel, Stepper} from "@mui/material";
+import {Box} from "@mui/material";
 import {Formik} from "formik";
 import {useState} from "react";
 import * as yup from "yup";
@@ -21,23 +21,17 @@ const Checkout = () => {
     const navigate = useNavigate();
 
     const handleFormSubmit = async (values, actions) => {
-        setActiveStep((activeStep) => activeStep + 1);
-        console.log(activeStep);
 
         // this copies the billing address onto shipping address
-        if (isFirstStep && values.shippingAddress.isSameAddress) {
-            actions.setFieldValue("shippingAddress", {
-                ...values.billingAddress,
-                isSameAddress: true,
-            });
-        }
 
-        if (isSecondStep) {
-            makePayment(values);
-        }
+        makePayment(values);
+
 
         actions.setTouched({});
     };
+    const formChange = (values, action) => {
+        console.log(values);
+    }
 
     async function makePayment(values) {
         const stripe = await stripePromise;
@@ -63,19 +57,13 @@ const Checkout = () => {
 
     return (
         <Box width="80%" m="100px auto">
-            <Stepper activeStep={activeStep} sx={{m: "20px 0", color: '#1A754A'}}>
-                <Step>
-                    <StepLabel>Billing</StepLabel>
-                </Step>
-                <Step>
-                    <StepLabel>Payment</StepLabel>
-                </Step>
-            </Stepper>
+
             <Box>
                 <Formik
                     onSubmit={handleFormSubmit}
                     initialValues={initialValues}
                     validationSchema={checkoutSchema[activeStep]}
+
                 >
                     {({
                           values,
@@ -108,52 +96,10 @@ const Checkout = () => {
                                 />
                             )}
                             <Box display="flex" justifyContent="space-between" gap="50px">
-                                {!isFirstStep && (
-                                    // <Button
-                                    //     fullWidth
-                                    //     color="primary"
-                                    //     variant="contained"
-                                    //     sx={{
-                                    //         backgroundColor: shades.primary[200],
-                                    //         boxShadow: "none",
-                                    //         color: "white",
-                                    //         borderRadius: 0,
-                                    //         padding: "15px 40px",
-                                    //     }}
-                                    //     onClick={() => setActiveStep(activeStep - 1)}
-                                    // >
-                                    //     Back
-                                    // </Button>
-                                    <button onClick={() => setActiveStep(activeStep - 1)}
-                                            className='btn rounded-sm flex-grow bg-black text-white'>
-                                        Back
-                                    </button>
-                                )}
-                                {/*<Button*/}
-                                {/*    fullWidth*/}
-                                {/*    type="submit"*/}
-                                {/*    color="primary"*/}
-                                {/*    variant="contained"*/}
-                                {/*    sx={{*/}
-                                {/*        backgroundColor: shades.primary[400],*/}
-                                {/*        boxShadow: "none",*/}
-                                {/*        color: "white",*/}
-                                {/*        borderRadius: 0,*/}
-                                {/*        padding: "15px 40px",*/}
-                                {/*    }}*/}
-                                {/*>*/}
-                                {/*    {!isSecondStep ? "Next" : "Place Order"}*/}
-                                {/*</Button>*/}
-                                {!isSecondStep ? <button className='btn rounded-sm btn-primary flex-grow text-white'>
-                                        Next
-                                    </button> :
-                                    <button onClick={() => window.paymentSuccess.showModal()}
-                                            className='btn rounded-sm btn-primary flex-grow text-white'>
-                                        Place Order
-                                    </button>}
-                                {/*<button className='btn rounded-sm btn-primary flex-grow text-white'>*/}
-                                {/*    {!isSecondStep ? "Next" : "Place Order"}*/}
-                                {/*</button>*/}
+                                <button onClick={() => window.paymentSuccess.showModal()}
+                                        className='btn rounded-sm btn-primary flex-grow text-white'>
+                                    Place Order
+                                </button>
                             </Box>
                         </form>
                     )}
@@ -180,9 +126,6 @@ const initialValues = {
     billingAddress: {
         firstName: "",
         lastName: "",
-        country: "",
-        street1: "",
-        street2: "",
         city: "",
         state: "",
         zipCode: "",
@@ -191,9 +134,6 @@ const initialValues = {
         isSameAddress: true,
         firstName: "",
         lastName: "",
-        country: "",
-        street1: "",
-        street2: "",
         city: "",
         state: "",
         zipCode: "",

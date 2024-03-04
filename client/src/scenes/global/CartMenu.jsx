@@ -106,6 +106,10 @@ const CartMenu = () => {
                                                     $ {item.attributes.price}
                                                 </Typography>
                                             </FlexBox>
+                                            <div className="flex gap-x-2">
+                                                <div className="badge badge-primary">Inside Dhaka</div>
+                                                <div className="badge border-black">Outside Dhaka</div>
+                                            </div>
                                         </Box>
                                     </FlexBox>
                                     <Divider/>
