@@ -52,7 +52,7 @@
     "AvailableProduct": {
       "type": "decimal"
     },
-    "img": {
+    "SliderImages": {
       "type": "media",
       "multiple": true,
       "required": false,
