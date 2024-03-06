@@ -1,15 +1,14 @@
-import {Box, Button, IconButton, Typography} from "@mui/material";
+import {Box} from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import {Link, useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import Item from "../../components/Item";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import {shades} from "../../theme";
 import {addToCart} from "../../state";
 import {useDispatch} from "react-redux";
 import useFetch from "../../hooks/useFetch";
+import {Carousel} from "react-responsive-carousel";
+import "./ItemDetails.scss"
 
 const API_URL = process.env.REACT_APP_API_URL;
 const UPLOAD_URL = process.env.REACT_APP_UPLOAD_URL;
@@ -21,12 +20,15 @@ const ItemDetails = () => {
     const [item, setItem] = useState(null);
     const [items, setItems] = useState([]);
 
+    const [currentSliderItem, setCurrentSliderItem] = useState();
+
+
     // Fetch item and items details using useFetch or fetch
     const {
         data: itemData,
         loading: itemLoading,
         error: itemError,
-    } = useFetch(`${API_URL}items/${itemId}?populate=image`);
+    } = useFetch(`${API_URL}items/${itemId}?populate=*`);
     const {
         data: itemsData,
         loading: itemsLoading,
@@ -47,6 +49,7 @@ const ItemDetails = () => {
     useEffect(() => {
         if (itemData) setItem(itemData);
         if (itemsData) setItems(itemsData);
+
     }, [itemData, itemsData]);
 
     // Handle loading and error states for item and items
@@ -71,59 +74,76 @@ const ItemDetails = () => {
             <Box display="flex" flexWrap="wrap" columnGap="40px">
                 {/* IMAGES */}
                 <Box flex="1 1 40%" mb="40px">
-                    <img
-                        alt={item?.name}
-                        className="h-[70vh] self-center"
-                        src={`${UPLOAD_URL}${item?.attributes?.image?.data?.attributes?.formats?.medium?.url}`}
+                    {
+                        itemData?.attributes?.SliderImages?.data ?
+                            <Carousel infiniteLoop={true} showArrows={true} showStatus={false}
+                            >
+                                <img
 
-                    />
+                                    src={`${UPLOAD_URL}${item?.attributes?.image?.data?.attributes?.formats?.medium?.url}`}
+                                />
+                                {
+                                    itemData?.attributes?.SliderImages?.data.map((s, i) => <div key={i}>
+                                        <img src={`${UPLOAD_URL}${s?.attributes?.url}`} alt=""/>
+
+                                    </div>)
+                                }
+                            </Carousel> : <img
+                                alt={item?.name}
+                                className="h-[70vh] self-center"
+                                src={`${UPLOAD_URL}${item?.attributes?.image?.data?.attributes?.formats?.medium?.url}`}
+                            />
+                    }
+
                 </Box>
 
                 {/* ACTIONS */}
                 <Box flex="1 1 50%" mb="40px">
-                    <Box m="65px 0 25px 0">
-                        <Typography variant="h3">{item?.attributes?.name}</Typography>
-                        <Typography>৳ {item?.attributes?.price}</Typography>
-                        <Typography sx={{mt: "20px"}}>
+                    <div className="flex flex-col">
+                        <p className='text-2xl'>{item?.attributes?.name}</p>
+                        <p className='text-base'>৳ {item?.attributes?.price}</p>
+                        <p className='my-5'>
                             {item?.attributes?.longDescription}
-                        </Typography>
-                    </Box>
+                        </p>
+                    </div>
 
-                    <Box display="flex" alignItems="center" minHeight="50px">
-                        <Box
-                            display="flex"
-                            alignItems="center"
-                            border={`1.5px solid ${shades.neutral[300]}`}
-                            mr="20px"
-                            p="2px 5px"
-                        >
-                            <IconButton onClick={() => setCount(Math.max(count - 1, 0))}>
-                                <RemoveIcon/>
-                            </IconButton>
-                            <Typography sx={{p: "0 5px"}}>{count}</Typography>
-                            <IconButton onClick={() => setCount(count + 1)}>
-                                <AddIcon/>
-                            </IconButton>
-                        </Box>
-                        <Button
-                            sx={{
-                                color: "white",
-                                borderRadius: 0,
-                                minWidth: "150px",
-                                padding: "10px 40px",
-                                backgroundColor: "#1a754a",
-                                "&:hover": {
-                                    backgroundColor: "#2b8e5f", // Lighter green on hover
-                                },
-                            }}
-                            onClick={() => dispatch(addToCart({item: {...item, count}}))}
-                        >
-                            ADD TO CART
-                        </Button>
-                    </Box>
+
+                    <div className="flex gap-x-5">
+                        <div className="join border text-white rounded-sm">
+                            <button onClick={() => setCount(Math.max(count - 1, 0))}
+                                    className='join-item btn text-primary hover:bg-primary hover:text-white duration-150 border-transparent bg-white text-xl'>
+                                <i
+                                    className='bi bi-dash'></i>
+                            </button>
+                            <p className='text-base  flex items-center join-item w-10 justify-center px-2 bg-white text-primary '>{count}</p>
+                            <button onClick={() => setCount(count + 1)}
+                                    className='border-none join-item btn-outline bg-white text-primary hover:bg-primary hover:text-white duration-150 border-transparent btn text-xl '>
+                                <i
+                                    className='bi bi-plus'></i>
+                            </button>
+                        </div>
+                        <button onClick={() => {
+                            dispatch(addToCart({item: {...item, count}}));
+                        }}
+                                className="btn btn-primary text-white disabled:text-base-300 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-gray-400 font-normal rounded-sm"
+                                disabled={count === 0}><i
+                            className='bi bi-cart'></i>Add
+                            To Cart
+                        </button>
+                    </div>
+
                     <Box>
+                        {
+                            item?.attributes?.category &&
+                            <div className='flex gap-x-2 mt-10 text-base'>Categories:
+                                <div className='flex gap-x-1'>
 
-                        <Typography>CATEGORIES: {item?.attributes?.category}</Typography>
+                                    {item?.attributes?.category?.data.map((c, i) =>
+                                        <p key={i}
+                                           className='capitalize'>{c.attributes.title.split('-').join(' ')}{i === item?.attributes?.category?.data.length - 1 ? '.' : ','}</p>)}
+                                </div>
+                            </div>
+                        }
                     </Box>
                 </Box>
             </Box>
@@ -144,7 +164,7 @@ const ItemDetails = () => {
 
             {/* RELATED ITEMS */}
             <div className="w-full mt-16">
-                <p className="font-semibold text-2xl ">Related Products</p>
+                <p className="font-semibold text-2xl px-5 lg:px-0">Related Products</p>
 
                 <div
                     className="text-2xl container lg:grid flex flex-col lg:grid-cols-4 grid-cols-1 pt-5 gap-10 px-10 items-center lg:px-0">
