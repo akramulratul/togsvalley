@@ -12,7 +12,7 @@ const importAll = (r) =>
     }, {});
 
 export const heroTextureImports = importAll(
-    require.context("../../assets", false, /\.(png|jpeg|svg)$/)
+    require.context("../../assets/MainCarousel", false, /\.(png|jpeg|svg)$/)
 );
 
 const MainCarousel = () => {

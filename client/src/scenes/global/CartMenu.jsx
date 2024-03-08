@@ -21,7 +21,6 @@ const CartMenu = () => {
     const isCartOpen = useSelector((state) => state.cart.isCartOpen);
 
     const totalPrice = cart.reduce((total, item) => {
-        console.log("check reducer", item);
         return total + item.count * item.attributes.price;
     }, 0);
     return (
@@ -114,8 +113,32 @@ const CartMenu = () => {
                             ))}
                         </Box>
 
+                        {
+                            cart.length > 0 &&
+                            <div className="grid grid-cols-2  items-center justify-between py-7">
+                                <p>Delivery Fee</p>
+                                <div className="flex flex-col">
+                                    <div className="grid grid-cols-5 gap-x-5 gap-y-3">
+                                        <label htmlFor="inside-dhaka" className="cursor-pointer text-right col-span-4">
+                                            Inside Dhaka: <span
+                                            className='text-primary font-semibold'>৳60</span></label>
+                                        <div className="flex justify-end">
+                                            <input type="radio" name="delivery-fee"
+                                                   className="radio radio-sm radio-primary"
+                                                   id="inside-dhaka" checked/></div>
+                                        <label htmlFor="outside-dhaka" className="cursor-pointer col-span-4 text-right">Outside
+                                            Dhaka: <span className='text-primary font-semibold'>৳120</span></label>
+                                        <div className="flex justify-end">
+                                            <input type="radio" name="delivery-fee"
+                                                   className="radio radio-sm radio-primary"
+                                                   id="outside-dhaka"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                         {/* ACTIONS */}
-                        <Box m="20px 0">
+                        <Box className="border-t ">
                             <FlexBox m="20px 0">
                                 <Typography fontWeight="bold">SUBTOTAL</Typography>
                                 <Typography fontWeight="bold">৳{totalPrice}</Typography>

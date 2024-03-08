@@ -8,6 +8,7 @@ import CartMenu from "./scenes/global/CartMenu";
 import Checkout from "./scenes/checkout/Checkout";
 import Confirmation from "./scenes/checkout/Confirmation";
 import CategoryProduct from "./scenes/categoryProduct/CategoryProduct";
+import {HelmetProvider} from "react-helmet-async";
 
 const ScrollToTop = () => {
     const {pathname} = useLocation();
@@ -22,19 +23,21 @@ const ScrollToTop = () => {
 function App() {
     return (
         <div className="app">
-            <BrowserRouter>
-                <Navbar/>
-                {/*<ScrollToTop/>*/}
-                <Routes>
-                    <Route path="/" element={<Home/>}/>
-                    <Route path="item/:itemId" element={<ItemDetails/>}/>
-                    <Route path="checkout" element={<Checkout/>}/>
-                    <Route path="checkout/success" element={<Confirmation/>}/>
-                    <Route path="/category/:id" element={<CategoryProduct/>}/>
-                </Routes>
-                <CartMenu/>
-                <Footer/>
-            </BrowserRouter>
+            <HelmetProvider>
+                <BrowserRouter>
+                    <Navbar/>
+                    {/*<ScrollToTop/>*/}
+                    <Routes>
+                        <Route path="/" element={<Home/>}/>
+                        <Route path="item/:itemId" element={<ItemDetails/>}/>
+                        <Route path="checkout" element={<Checkout/>}/>
+                        <Route path="checkout/success" element={<Confirmation/>}/>
+                        <Route path="/category/:id" element={<CategoryProduct/>}/>
+                    </Routes>
+                    <CartMenu/>
+                    <Footer/>
+                </BrowserRouter>
+            </HelmetProvider>
         </div>
     );
 }

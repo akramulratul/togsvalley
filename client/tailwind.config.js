@@ -9,7 +9,13 @@ module.exports = {
     },
     important: '#root',
     theme: {
-        extend: {},
+        extend: {
+            colors: {
+                'base-100': '#ffffff',
+                'base-200': '#F7F7F7',
+                'base-300': '#303030',
+            }
+        },
     },
     plugins: [require('daisyui')],
     daisyui: {
@@ -20,7 +26,7 @@ module.exports = {
                     secondary: '#E9A031',
                     'base-100': '#ffffff',
                     'base-200': '#F7F7F7',
-                    'base-300': '#303030 ',
+                    'base-300': '#303030',
                 },
             },
         ],

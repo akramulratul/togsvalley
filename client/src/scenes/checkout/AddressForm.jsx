@@ -1,137 +1,140 @@
-import { getIn } from "formik";
-import { Box } from "@mui/material";
+import {getIn} from "formik";
+import {Box, Input, MenuItem, Select} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import {useEffect, useState} from "react";
+
+
+const address = require('@bangladeshi/bangladesh-address');
 
 const AddressForm = ({
-  type,
-  values,
-  touched,
-  errors,
-  handleBlur,
-  handleChange,
-}) => {
-  const isNonMobile = useMediaQuery("(min-width:600px)");
+                         type,
+                         values,
+                         touched,
+                         errors,
+                         handleBlur,
+                         handleChange,
+                     }) => {
+    const isNonMobile = useMediaQuery("(min-width:600px)");
 
-  // these functions allow for better code readability
-  const formattedName = (field) => `${type}.${field}`;
+    // these functions allow for better code readability
+    const formattedName = (field) => `${type}.${field}`;
+    const [cities, setCities] = useState([]);
+    const [thanas, setThanas] = useState([]);
 
-  const formattedError = (field) =>
-    Boolean(
-      getIn(touched, formattedName(field)) &&
-        getIn(errors, formattedName(field))
+    // const {values} = useFormikContext();
+
+    useEffect(() => {
+        setCities(address.allDistict());
+    }, []);
+
+    useEffect(() => {
+        setThanas(address.upazilasOf(values.city));
+        // console.log(address.upazilasOf(values.city))
+    }, [values]);
+
+
+    const formattedError = (field) =>
+        Boolean(
+            getIn(touched, formattedName(field)) &&
+            getIn(errors, formattedName(field))
+        );
+
+    const formattedHelper = (field) =>
+        getIn(touched, formattedName(field)) && getIn(errors, formattedName(field));
+
+    return (
+        <Box
+            display="grid"
+            gap="15px"
+            gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+            sx={{
+                "& > div": {gridColumn: isNonMobile ? undefined : "span 4"},
+            }}
+        >
+            <TextField
+                fullWidth
+                type="text"
+                label="Name"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.firstName}
+                name={formattedName("firstName")}
+                error={formattedError("firstName")}
+                helperText={formattedHelper("firstName")}
+                sx={{gridColumn: "span 4"}}
+            />
+            <TextField
+                fullWidth
+                type="text"
+                label="Email"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.email}
+                name="email"
+                error={!!touched.email && !!errors.email}
+                helperText={touched.email && errors.email}
+                sx={{gridColumn: "span 4", marginBottom: "15px"}}
+            />
+            <TextField
+                fullWidth
+                type="text"
+                label="Phone Number"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.phoneNumber}
+                name="phoneNumber"
+                error={!!touched.phoneNumber && !!errors.phoneNumber}
+                helperText={touched.phoneNumber && errors.phoneNumber}
+                sx={{gridColumn: "span 4"}}
+            />
+
+            <Select
+                fullWidth
+                type="text"
+                label="City"
+
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.city}
+                name={formattedName("city")}
+                error={formattedError("city")}
+                helperText={formattedHelper("city")}
+                sx={{gridColumn: "span 2"}}
+                defaultValue=""
+
+            >
+                {
+                    cities.map((c, i) => <MenuItem value={c} key={i}>{c}</MenuItem>)
+                }
+            </Select>
+
+            <Select
+                fullWidth
+                type="text"
+                label="Thana"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.thana}
+                name={formattedName("thana")}
+                error={formattedError("thana")}
+                helperText={formattedHelper("thana")}
+                sx={{gridColumn: "span 2"}}
+                defaultValue=""
+
+            >
+                {
+                    thanas.map((c, i) => <MenuItem value={c.upazila} key={i}>{c.upazila}</MenuItem>)
+                }
+            </Select>
+
+            <Input aria-label="minimum height" minRows={3} placeholder="Your Address"
+                   sx={{gridColumn: "span 4"}}/>
+            {/*<textarea className="textarea textarea-bordered"></textarea>*/}
+
+
+        </Box>
     );
-
-  const formattedHelper = (field) =>
-    getIn(touched, formattedName(field)) && getIn(errors, formattedName(field));
-
-  return (
-    <Box
-      display="grid"
-      gap="15px"
-      gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-      sx={{
-        "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-      }}
-    >
-      <TextField
-        fullWidth
-        type="text"
-        label="First Name"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={values.firstName}
-        name={formattedName("firstName")}
-        error={formattedError("firstName")}
-        helperText={formattedHelper("firstName")}
-        sx={{ gridColumn: "span 2" }}
-      />
-      <TextField
-        fullWidth
-        type="text"
-        label="Last Name"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={values.lastName}
-        name={formattedName("lastName")}
-        error={formattedError("lastName")}
-        helperText={formattedHelper("lastName")}
-        sx={{ gridColumn: "span 2" }}
-      />
-      <TextField
-        fullWidth
-        type="text"
-        label="Country"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={values.country}
-        name={formattedName("country")}
-        error={formattedError("country")}
-        helperText={formattedHelper("country")}
-        sx={{ gridColumn: "span 4" }}
-      />
-      <TextField
-        fullWidth
-        type="text"
-        label="Street Address"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={values.street1}
-        name={formattedName("street1")}
-        error={formattedError("street1")}
-        helperText={formattedHelper("street1")}
-        sx={{ gridColumn: "span 2" }}
-      />
-      <TextField
-        fullWidth
-        type="text"
-        label="Street Address 2 (optional)"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={values.street2}
-        name={formattedName("street2")}
-        error={formattedError("street2")}
-        helperText={formattedHelper("street2")}
-        sx={{ gridColumn: "span 2" }}
-      />
-      <TextField
-        fullWidth
-        type="text"
-        label="City"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={values.city}
-        name={formattedName("city")}
-        error={formattedError("city")}
-        helperText={formattedHelper("city")}
-        sx={{ gridColumn: "span 2" }}
-      />
-      <TextField
-        fullWidth
-        type="text"
-        label="State"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={values.state}
-        name={formattedName("state")}
-        error={formattedError("state")}
-        helperText={formattedHelper("state")}
-        sx={{ gridColumn: "1fr" }}
-      />
-      <TextField
-        fullWidth
-        type="text"
-        label="Zip Code"
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={values.zipCode}
-        name={formattedName("zipCode")}
-        error={formattedError("zipCode")}
-        helperText={formattedHelper("zipCode")}
-        sx={{ gridColumn: "1fr" }}
-      />
-    </Box>
-  );
 };
 
 export default AddressForm;
