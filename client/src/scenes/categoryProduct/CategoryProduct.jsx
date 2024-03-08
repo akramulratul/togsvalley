@@ -1,10 +1,12 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
 import Item from "../../components/Item";
+import Title from "../../components/Title";
 
 const CategoryProduct = () => {
     const {id} = useParams();
+    const [categoryName, setCategoryName] = useState('');
     const {data, loading, error} = useFetch(`/items?populate=*`);
 
     useEffect(() => {
@@ -13,6 +15,7 @@ const CategoryProduct = () => {
 
     return (
         <div className="container">
+            <Title title={capitalizeText(id, '-')}/>
             <div className="text-sm breadcrumbs my-5">
                 <ul>
                     <li className='uppercase border-b-2 border-primary px-1 '>
@@ -33,3 +36,12 @@ const CategoryProduct = () => {
 };
 
 export default CategoryProduct;
+
+export const capitalizeText = (string = '', seprator = '-') => {
+    const text = string.split(seprator);
+    let convertedText = text.map((t) => {
+        let temp = `${t[0].toUpperCase()}${t.slice(1, t.length)}`;
+        return temp;
+    })
+    return convertedText.join(' ');
+}

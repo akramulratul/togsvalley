@@ -9,6 +9,7 @@ import {useDispatch} from "react-redux";
 import useFetch from "../../hooks/useFetch";
 import {Carousel} from "react-responsive-carousel";
 import "./ItemDetails.scss"
+import Title from "../../components/Title";
 
 const API_URL = process.env.REACT_APP_API_URL;
 const UPLOAD_URL = process.env.REACT_APP_UPLOAD_URL;
@@ -49,7 +50,7 @@ const ItemDetails = () => {
     useEffect(() => {
         if (itemData) setItem(itemData);
         if (itemsData) setItems(itemsData);
-
+        console.log(itemData);
     }, [itemData, itemsData]);
 
     // Handle loading and error states for item and items
@@ -63,6 +64,7 @@ const ItemDetails = () => {
 
     return (
         <div className="container">
+            <Title title={itemData?.attributes.name}/>
             <div className="text-sm breadcrumbs pb-5 mb-10 border-b">
                 <ul>
                     <li className='uppercase  '>
@@ -107,30 +109,34 @@ const ItemDetails = () => {
                         </p>
                     </div>
 
-
-                    <div className="flex gap-x-5">
-                        <div className="join border text-white rounded-sm">
-                            <button onClick={() => setCount(Math.max(count - 1, 0))}
-                                    className='join-item btn text-primary hover:bg-primary hover:text-white duration-150 border-transparent bg-white text-xl'>
-                                <i
-                                    className='bi bi-dash'></i>
-                            </button>
-                            <p className='text-base  flex items-center join-item w-10 justify-center px-2 bg-white text-primary '>{count}</p>
-                            <button onClick={() => setCount(count + 1)}
-                                    className='border-none join-item btn-outline bg-white text-primary hover:bg-primary hover:text-white duration-150 border-transparent btn text-xl '>
-                                <i
-                                    className='bi bi-plus'></i>
-                            </button>
-                        </div>
-                        <button onClick={() => {
-                            dispatch(addToCart({item: {...item, count}}));
-                        }}
-                                className="btn btn-primary text-white disabled:text-base-300 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-gray-400 font-normal rounded-sm"
-                                disabled={count === 0}><i
-                            className='bi bi-cart'></i>Add
-                            To Cart
-                        </button>
-                    </div>
+                    {
+                        itemData?.attributes?.AvailableProduct < 1 ?
+                            <p className='border-error border w-fit font-semibold text-base text-error px-3 py-2'>Out of
+                                Stock</p> :
+                            <div className="flex gap-x-5">
+                                <div className="join border text-white rounded-sm">
+                                    <button onClick={() => setCount(Math.max(count - 1, 0))}
+                                            className='join-item btn text-primary hover:bg-primary hover:text-white duration-150 border-transparent bg-white text-xl'>
+                                        <i
+                                            className='bi bi-dash'></i>
+                                    </button>
+                                    <p className='text-base  flex items-center join-item w-10 justify-center px-2 bg-white text-primary'>{count}</p>
+                                    <button onClick={() => setCount(count + 1)}
+                                            className='border-none join-item btn-outline bg-white text-primary hover:bg-primary hover:text-white duration-150 border-transparent btn text-xl '>
+                                        <i
+                                            className='bi bi-plus'></i>
+                                    </button>
+                                </div>
+                                <button onClick={() => {
+                                    dispatch(addToCart({item: {...item, count}}));
+                                }}
+                                        className="btn btn-primary text-white disabled:text-gray-300 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-gray-300 font-normal rounded-sm"
+                                        disabled={count === 0}><i
+                                    className='bi bi-cart'></i>Add
+                                    To Cart
+                                </button>
+                            </div>
+                    }
 
                     <Box>
                         {

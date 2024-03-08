@@ -8,6 +8,7 @@ import Shipping from "./Shipping";
 import {loadStripe} from "@stripe/stripe-js";
 import accepted from "../../assets/accepted.png";
 import {useNavigate} from "react-router-dom";
+import Title from "../../components/Title";
 
 const stripePromise = loadStripe(
     "pk_test_51LgU7yConHioZHhlAcZdfDAnV9643a7N1CMpxlKtzI1AUWLsRyrord79GYzZQ6m8RzVnVQaHsgbvN1qSpiDegoPi006QkO0Mlc"
@@ -57,7 +58,7 @@ const Checkout = () => {
 
     return (
         <Box width="80%" m="100px auto">
-
+            <Title title='Checkout'/>
             <Box>
                 <Formik
                     onSubmit={handleFormSubmit}
