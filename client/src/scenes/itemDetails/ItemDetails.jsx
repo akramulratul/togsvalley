@@ -50,7 +50,6 @@ const ItemDetails = () => {
     useEffect(() => {
         if (itemData) setItem(itemData);
         if (itemsData) setItems(itemsData);
-        console.log(itemData);
     }, [itemData, itemsData]);
 
     // Handle loading and error states for item and items

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Link, useParams} from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
 import Item from "../../components/Item";
@@ -6,12 +6,11 @@ import Title from "../../components/Title";
 
 const CategoryProduct = () => {
     const {id} = useParams();
-    const [categoryName, setCategoryName] = useState('');
-    const {data, loading, error} = useFetch(`/items?populate=*`);
+    const {data, loading, error} = useFetch(`/items?populate=image`);
 
-    useEffect(() => {
-        console.log(data);
-    }, [data]);
+    // useEffect(() => {
+    //     console.log(data);
+    // }, [data]);
 
     return (
         <div className="container">
@@ -37,8 +36,8 @@ const CategoryProduct = () => {
 
 export default CategoryProduct;
 
-export const capitalizeText = (string = '', seprator = '-') => {
-    const text = string.split(seprator);
+export const capitalizeText = (string = '', separator = '-') => {
+    const text = string.split(separator);
     let convertedText = text.map((t) => {
         let temp = `${t[0].toUpperCase()}${t.slice(1, t.length)}`;
         return temp;
