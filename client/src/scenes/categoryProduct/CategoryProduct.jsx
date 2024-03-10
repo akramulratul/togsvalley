@@ -1,17 +1,18 @@
-import React from 'react';
-import {Link, useParams} from "react-router-dom";
+import React from "react";
+import { Link, useParams } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
 import Item from "../../components/Item";
 import Title from "../../components/Title";
 
 const CategoryProduct = () => {
-    const {id} = useParams();
-    const {data, loading, error} = useFetch(`/items?populate=image`);
+  const { id } = useParams();
+  const fetchURL = `/items?filters[category][title]=${id}&populate=image`;
+  const { data, loading, error } = useFetch(fetchURL);
+  console.log(fetchURL);
 
-    // useEffect(() => {
-    //     console.log(data);
-    // }, [data]);
-
+  // useEffect(() => {
+  //     console.log(data);
+  // }, [data]);
     return (
         <div className="container">
             <Title title={capitalizeText(id, '-')}/>
@@ -32,15 +33,16 @@ const CategoryProduct = () => {
             </div>
         </div>
     );
+
 };
 
 export default CategoryProduct;
 
-export const capitalizeText = (string = '', separator = '-') => {
-    const text = string.split(separator);
-    let convertedText = text.map((t) => {
-        let temp = `${t[0].toUpperCase()}${t.slice(1, t.length)}`;
-        return temp;
-    })
-    return convertedText.join(' ');
-}
+export const capitalizeText = (string = "", separator = "-") => {
+  const text = string.split(separator);
+  let convertedText = text.map((t) => {
+    let temp = `${t[0].toUpperCase()}${t.slice(1, t.length)}`;
+    return temp;
+  });
+  return convertedText.join(" ");
+};
