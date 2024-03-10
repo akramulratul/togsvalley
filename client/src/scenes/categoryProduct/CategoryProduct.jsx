@@ -15,7 +15,7 @@ const CategoryProduct = () => {
     return (
         <div className="container">
             <Title title={capitalizeText(id, '-')}/>
-            <div className="text-sm breadcrumbs my-5">
+            <div className="text-sm px-5 lg:px-0 breadcrumbs my-5">
                 <ul>
                     <li className='uppercase border-b-2 border-primary px-1 '>
                         <Link className='hover:no-underline' to='/'>Home</Link>
@@ -24,7 +24,7 @@ const CategoryProduct = () => {
                 </ul>
             </div>
             <div
-                className="text-2xl container lg:grid flex border-t border-gray-200 flex-col lg:grid-cols-4 grid-cols-1 pt-10 gap-10 px-10 items-center lg:px-0">
+                className="text-2xl container grid grid-cols-1 md:grid-cols-2 border-t border-gray-200 flex-col lg:grid-cols-4 pt-10 gap-10 px-10 lg:px-0">
                 {
                     data && data.map((d, i) => <Item key={i} item={d}/>)
                 }
