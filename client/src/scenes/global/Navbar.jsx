@@ -2,7 +2,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {Link, NavLink, useLocation} from "react-router-dom";
 import {setIsCartOpen} from "../../state";
 import CustomNav from "../../components/CustomNav";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
+import SearchModal from "./SearchModal";
 
 const pages = [
     {
@@ -56,9 +57,11 @@ function Navbar() {
                         </Link>
                     </div>
                     <div className="flex absolute right-[10%] lg:right-0 gap-x-2 h-fit self-center">
-                        <button className="btn btn-sm lg:btn-md bg-transparent">
+                        <button className="btn btn-sm lg:btn-md bg-transparent"
+                                onClick={() => document.getElementById('search-modal').showModal()}>
                             <i className="bi bi-search text-base"></i>
                         </button>
+
                         <div>
                             <div className="indicator">
                                 <span className="indicator-item badge badge-primary">{cart.length}</span>
@@ -98,7 +101,8 @@ function Navbar() {
                     }
                 </div>
             </div>
-
+            
+            <SearchModal/>
         </div>
     );
 }
