@@ -1,12 +1,13 @@
-import {Box, Button, Divider, IconButton, Typography} from "@mui/material";
+import {Box, Divider, IconButton, Typography} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import styled from "@emotion/styled";
 import {shades} from "../../theme";
-import {decreaseCount, increaseCount, removeFromCart, setIsCartOpen,} from "../../state";
+import {changeDeliveryAddress, decreaseCount, increaseCount, removeFromCart, setIsCartOpen,} from "../../state";
 import {useNavigate} from "react-router-dom";
+import {useEffect, useRef, useState} from "react";
 
 const FlexBox = styled(Box)`
     display: flex;
@@ -18,7 +19,17 @@ const CartMenu = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart.cart);
+    const deliAddress = useSelector((state) => state.cart.deliveryFee);
     const isCartOpen = useSelector((state) => state.cart.isCartOpen);
+    const [deliveryFee, setDeliveryFee] = useState(deliAddress);
+    const [couponCode, setCouponCode] = useState('');
+    const couponRef = useRef(null);
+    const [couponError, setCouponError] = useState(false);
+
+    useEffect(() => {
+        dispatch(changeDeliveryAddress(deliveryFee));
+    }, [deliveryFee, dispatch]);
+
 
     const totalPrice = cart.reduce((total, item) => {
         return total + item.count * item.attributes.price;
@@ -68,9 +79,9 @@ const CartMenu = () => {
                                         </Box>
                                         <Box flex="1 1 60%">
                                             <FlexBox mb="5px">
-                                                <Typography fontWeight="bold">
+                                                <p className='text-base font-semibold'>
                                                     {item.attributes.name}
-                                                </Typography>
+                                                </p>
                                                 <IconButton
                                                     onClick={() =>
                                                         dispatch(removeFromCart({id: item.id}))
@@ -79,7 +90,8 @@ const CartMenu = () => {
                                                     <CloseIcon/>
                                                 </IconButton>
                                             </FlexBox>
-                                            {/*<Typography>{item.attributes.shortDescription}</Typography>*/}
+                                            <p>৳ {item.attributes.price}</p>
+
                                             <FlexBox m="15px 0">
                                                 <Box
                                                     display="flex"
@@ -103,7 +115,7 @@ const CartMenu = () => {
                                                     </IconButton>
                                                 </Box>
                                                 <Typography fontWeight="bold">
-                                                    $ {item.attributes.price}
+                                                    ৳ {item.attributes.price * item.count}
                                                 </Typography>
                                             </FlexBox>
                                         </Box>
@@ -118,54 +130,101 @@ const CartMenu = () => {
                             <div className="grid grid-cols-2  items-center justify-between py-7">
                                 <p>Delivery Fee</p>
                                 <div className="flex flex-col">
-                                    <div className="grid grid-cols-5 gap-x-5 gap-y-3">
+                                    <form className="grid grid-cols-5 gap-x-5 gap-y-3">
                                         <label htmlFor="inside-dhaka" className="cursor-pointer text-right col-span-4">
                                             Inside Dhaka: <span
                                             className='text-primary font-semibold'>৳60</span></label>
                                         <div className="flex justify-end">
-                                            <input type="radio" name="delivery-fee"
+                                            <input onClick={() => setDeliveryFee({
+                                                    address: "inside-dhaka",
+                                                    price: '60'
+                                                }
+                                            )} type="radio" name="delivery-fee"
+                                                   value={60}
                                                    className="radio radio-sm radio-primary"
-                                                   id="inside-dhaka" checked/></div>
+                                                   id="inside-dhaka" defaultChecked/></div>
                                         <label htmlFor="outside-dhaka" className="cursor-pointer col-span-4 text-right">Outside
                                             Dhaka: <span className='text-primary font-semibold'>৳120</span></label>
                                         <div className="flex justify-end">
-                                            <input type="radio" name="delivery-fee"
+                                            <input onClick={() => setDeliveryFee({
+                                                    address: "outside-dhaka",
+                                                    price: '120'
+                                                }
+                                            )} type="radio" name="delivery-fee"
+                                                   value={120}
                                                    className="radio radio-sm radio-primary"
                                                    id="outside-dhaka"/>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
                         }
                         {/* ACTIONS */}
-                        <Box className="border-t ">
-                            <FlexBox m="20px 0">
-                                <Typography fontWeight="bold">SUBTOTAL</Typography>
-                                <Typography fontWeight="bold">৳{totalPrice}</Typography>
-                            </FlexBox>
-                            <Button
-                                sx={{
-                                    backgroundColor: shades.primary[400],
-                                    "&:hover": {
-                                        backgroundColor: "#7e7e7e", // Lighter green on hover
-                                    },
-                                    color: "white",
-                                    borderRadius: 0,
-                                    minWidth: "100%",
-                                    padding: "20px 40px",
-                                    m: "20px 0",
-                                }}
-                                onClick={() => {
-                                    navigate("/checkout");
-                                    dispatch(setIsCartOpen({}));
-                                }}
+                        <div className="border-t text-sm flex flex-col">
+
+                            <div className='flex justify-between my-5'>
+                                <div className="flex flex-col gap-y-1 justify-end">
+                                    {
+                                        couponCode && <p className='font-bold'>Coupon Code: {couponCode}</p>
+                                    }
+                                    <p className='font-bold text-base mt-2'>SUBTOTAL</p>
+                                </div>
+                                {
+                                    cart.length === 0 ?
+                                        <p className='font-bold'>৳{totalPrice}</p> :
+                                        couponCode === 'offer' ?
+                                            <div className='flex flex-col items-end gap-y-1'>
+                                                <p className='font-bold '>৳{totalPrice + +deliAddress.price}</p>
+                                                <p className='font-bold '>-৳100</p>
+                                                <p className='font-bold mt-2'>৳{totalPrice + +deliAddress.price - 100}</p>
+                                            </div>
+                                            :
+                                            <p className='font-bold '>৳{totalPrice + +deliAddress.price}</p>
+                                }
+
+                            </div>
+                            <button className='btn btn-primary w-full text-white font-medium mt-5 rounded-none'
+                                    onClick={() => {
+                                        navigate("/checkout");
+                                        dispatch(setIsCartOpen({}));
+                                    }}
                             >
                                 CHECKOUT
-                            </Button>
-                        </Box>
+                            </button>
+                            <p onClick={() => document.getElementById('coupon-modal').showModal()}
+                               className='text-primary text-center mt-5 font-medium underline cursor-pointer text-sm'>Apply
+                                Coupon</p>
+                        </div>
                     </Box>
                 </Box>
             </div>
+
+            <dialog id="coupon-modal" className="modal">
+                <div className="modal-box flex flex-col">
+                    <form method="dialog">
+                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                    </form>
+                    <h3 className="font-bold text-lg">Coupon</h3>
+                    <input type="text" ref={couponRef}
+                           className={`input mt-3 focus:outline-0 input-bordered w-full rounded-none ${couponError && couponRef.current.value.trim() !== '' ? 'border-error' : ''}`}
+                           placeholder='Coupon Code'/>
+                    {
+                        couponError && couponRef.current.value.trim() !== '' &&
+                        <span className='text-error'>Coupon cannot be applied!</span>
+                    }
+
+                    <button onClick={() => {
+                        if (couponRef.current.value === 'offer') {
+                            setCouponError(false);
+                            document.getElementById('coupon-modal').close();
+                            setCouponCode(couponRef.current.value);
+                        } else setCouponError(true);
+                    }}
+                            className='btn btn-primary rounded-none disabled:bg-gray-300 disabled:text-gray-400 font-normal text-white mt-5'>
+                        Apply Coupon
+                    </button>
+                </div>
+            </dialog>
         </Box>
     );
 };
