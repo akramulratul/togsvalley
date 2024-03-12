@@ -218,6 +218,9 @@ const CartMenu = () => {
                             setCouponError(false);
                             document.getElementById('coupon-modal').close();
                             setCouponCode(couponRef.current.value);
+                        } else if (couponRef.current.value.trim() === '') {
+                            document.getElementById('coupon-modal').close();
+                            setCouponCode('');
                         } else setCouponError(true);
                     }}
                             className='btn btn-primary rounded-none disabled:bg-gray-300 disabled:text-gray-400 font-normal text-white mt-5'>
