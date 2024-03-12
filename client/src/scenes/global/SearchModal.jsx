@@ -26,9 +26,9 @@ const SearchModal = () => {
             setData([]);
     }, [defferedInput]);
 
-    // useEffect(() => {
-    //     modalRef.current.close();
-    // }, [location])
+    useEffect(() => {
+        modalRef.current.close();
+    }, [location])
 
 
     return (
