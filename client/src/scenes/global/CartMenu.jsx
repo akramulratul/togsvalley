@@ -6,8 +6,8 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import styled from "@emotion/styled";
 import {shades} from "../../theme";
 import {changeDeliveryAddress, decreaseCount, increaseCount, removeFromCart, setIsCartOpen,} from "../../state";
-import {useNavigate} from "react-router-dom";
-import {useEffect, useRef, useState} from "react";
+import {Link, useLocation, useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
 
 const FlexBox = styled(Box)`
     display: flex;
@@ -22,9 +22,12 @@ const CartMenu = () => {
     const deliAddress = useSelector((state) => state.cart.deliveryFee);
     const isCartOpen = useSelector((state) => state.cart.isCartOpen);
     const [deliveryFee, setDeliveryFee] = useState(deliAddress);
-    const [couponCode, setCouponCode] = useState('');
-    const couponRef = useRef(null);
-    const [couponError, setCouponError] = useState(false);
+    const location = useLocation();
+
+    // useEffect(() => {
+    //     dispatch(setIsCartOpen({}));
+    // }, [location])
+
 
     useEffect(() => {
         dispatch(changeDeliveryAddress(deliveryFee));
@@ -32,6 +35,8 @@ const CartMenu = () => {
 
 
     const totalPrice = cart.reduce((total, item) => {
+        if (item.attributes.DiscountedPrice !== 'null' && item.attributes.DiscountedPrice > 0)
+            return total + item.count * (item.attributes.price - (item.attributes.price * (item?.attributes?.DiscountedPrice / 100)));
         return total + item.count * item.attributes.price;
     }, 0);
     return (
@@ -79,9 +84,9 @@ const CartMenu = () => {
                                         </Box>
                                         <Box flex="1 1 60%">
                                             <FlexBox mb="5px">
-                                                <p className='text-base font-semibold'>
+                                                <Link to={`/item/${item.id}`} className='text-base font-semibold'>
                                                     {item.attributes.name}
-                                                </p>
+                                                </Link>
                                                 <IconButton
                                                     onClick={() =>
                                                         dispatch(removeFromCart({id: item.id}))
@@ -90,7 +95,17 @@ const CartMenu = () => {
                                                     <CloseIcon/>
                                                 </IconButton>
                                             </FlexBox>
-                                            <p>৳ {item.attributes.price}</p>
+
+                                            {
+                                                item?.attributes?.DiscountedPrice !== null && item?.attributes?.DiscountedPrice > 0 ?
+                                                    <div
+                                                        className='flex items-center gap-x-3 text-center '>
+                                                        <s><p className='text-sm'>৳ {item.attributes.price}</p></s>
+                                                        <p className='text-base'>৳ {item.attributes.price - (item.attributes.price * (item?.attributes?.DiscountedPrice / 100))}</p>
+                                                    </div>
+                                                    :
+                                                    <p className='text-base'>৳ {item.attributes.price}</p>
+                                            }
 
                                             <FlexBox m="15px 0">
                                                 <Box
@@ -115,7 +130,12 @@ const CartMenu = () => {
                                                     </IconButton>
                                                 </Box>
                                                 <Typography fontWeight="bold">
-                                                    ৳ {item.attributes.price * item.count}
+                                                    {
+                                                        item?.attributes?.DiscountedPrice !== null && item?.attributes?.DiscountedPrice > 0 ?
+                                                            <p>৳ {(item.attributes.price - (item.attributes.price * (item?.attributes?.DiscountedPrice / 100))) * item.count}</p>
+                                                            :
+                                                            <p>৳ {item.attributes.price * item.count}</p>
+                                                    }
                                                 </Typography>
                                             </FlexBox>
                                         </Box>
@@ -164,22 +184,13 @@ const CartMenu = () => {
 
                             <div className='flex justify-between my-5'>
                                 <div className="flex flex-col gap-y-1 justify-end">
-                                    {
-                                        couponCode && <p className='font-bold'>Coupon Code: {couponCode}</p>
-                                    }
+
                                     <p className='font-bold text-base mt-2'>SUBTOTAL</p>
                                 </div>
                                 {
                                     cart.length === 0 ?
                                         <p className='font-bold'>৳{totalPrice}</p> :
-                                        couponCode === 'offer' ?
-                                            <div className='flex flex-col items-end gap-y-1'>
-                                                <p className='font-bold '>৳{totalPrice + +deliAddress.price}</p>
-                                                <p className='font-bold '>-৳100</p>
-                                                <p className='font-bold mt-2'>৳{totalPrice + +deliAddress.price - 100}</p>
-                                            </div>
-                                            :
-                                            <p className='font-bold '>৳{totalPrice + +deliAddress.price}</p>
+                                        <p className='font-bold '>৳{totalPrice + +deliAddress.price}</p>
                                 }
 
                             </div>
@@ -191,43 +202,13 @@ const CartMenu = () => {
                             >
                                 CHECKOUT
                             </button>
-                            <p onClick={() => document.getElementById('coupon-modal').showModal()}
-                               className='text-primary text-center mt-5 font-medium underline cursor-pointer text-sm'>Apply
-                                Coupon</p>
+
                         </div>
                     </Box>
                 </Box>
             </div>
 
-            <dialog id="coupon-modal" className="modal">
-                <div className="modal-box flex flex-col">
-                    <form method="dialog">
-                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                    </form>
-                    <h3 className="font-bold text-lg">Coupon</h3>
-                    <input type="text" ref={couponRef}
-                           className={`input mt-3 focus:outline-0 input-bordered w-full rounded-none ${couponError && couponRef.current.value.trim() !== '' ? 'border-error' : ''}`}
-                           placeholder='Coupon Code'/>
-                    {
-                        couponError && couponRef.current.value.trim() !== '' &&
-                        <span className='text-error'>Coupon cannot be applied!</span>
-                    }
 
-                    <button onClick={() => {
-                        if (couponRef.current.value === 'offer') {
-                            setCouponError(false);
-                            document.getElementById('coupon-modal').close();
-                            setCouponCode(couponRef.current.value);
-                        } else if (couponRef.current.value.trim() === '') {
-                            document.getElementById('coupon-modal').close();
-                            setCouponCode('');
-                        } else setCouponError(true);
-                    }}
-                            className='btn btn-primary rounded-none disabled:bg-gray-300 disabled:text-gray-400 font-normal text-white mt-5'>
-                        Apply Coupon
-                    </button>
-                </div>
-            </dialog>
         </Box>
     );
 };

@@ -47,7 +47,7 @@ const SearchModal = () => {
                         className='bi bi-x'></i></button>
                 </div>
                 {
-                    input.trim() !== '' && data.length === 0 &&
+                    input.trim() !== '' && data.length === 0 && !loading &&
                     <p className="text-2xl pt-10 px-10 ">No Product available for {defferedInput}</p>
                 }
 

@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {Link} from "react-router-dom";
 import useFetch from "../hooks/useFetch";
@@ -20,6 +20,10 @@ const Item = ({item, width}) => {
         item?.attributes?.image?.data?.attributes?.formats?.medium?.url
     }`;
 
+
+    useEffect(() => {
+        console.log(data);
+    }, [data]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -56,11 +60,25 @@ const Item = ({item, width}) => {
                         To Cart
                     </button>
                 </div>
-
+                {
+                    data?.attributes?.DiscountedPrice !== null && data?.attributes?.DiscountedPrice > 0 &&
+                    <div className="absolute bg-blue-600 rounded-lg text-white text-base  top-[2%] left-[2%] px-3 py-2">
+                        {data?.attributes?.DiscountedPrice}% off
+                    </div>
+                }
             </div>
             <div className="text-center text-lg mt-3">
-                <p>{name}</p>
-                <p>৳ {price}</p>
+                <p className='font-semibold'>{name}</p>
+                {
+                    data?.attributes?.DiscountedPrice !== null && data?.attributes?.DiscountedPrice > 0 ?
+                        <div className='flex items-center gap-x-3 text-center justify-center'>
+                            <s><p className='text-sm'>৳ {price}</p></s>
+                            <p className='text-base'>৳ {price - (price * (data?.attributes?.DiscountedPrice / 100))}</p>
+                        </div>
+                        :
+                        <p className='text-base'>৳ {price}</p>
+                }
+
             </div>
         </div>
     );
