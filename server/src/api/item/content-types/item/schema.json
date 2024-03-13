@@ -62,6 +62,10 @@
         "videos",
         "audios"
       ]
+    },
+    "DiscountedPrice": {
+      "type": "integer",
+      "default": 0
     }
   }
 }

@@ -4,6 +4,10 @@ const initialState = {
     isCartOpen: false,
     cart: [],
     items: [],
+    deliveryFee: {
+        address: 'inside-dhaka',
+        price: '60'
+    }
 };
 
 export const cartSlice = createSlice({
@@ -15,12 +19,12 @@ export const cartSlice = createSlice({
         },
 
         addToCart: (state, action) => {
-            // state.cart = [...state.cart, action.payload.item];
             let existing = state.cart.some((item) => item.id === action.payload.item.id);
             if (existing) {
                 state.cart = state.cart.map((item) => {
-                        if (item.id === action.payload.item.id)
-                            item.count++;
+                        if (item.id === action.payload.item.id) {
+                            item.count += action.payload.item.count;
+                        }
                         return item;
                     }
                 )
@@ -54,6 +58,10 @@ export const cartSlice = createSlice({
         setIsCartOpen: (state) => {
             state.isCartOpen = !state.isCartOpen;
         },
+
+        changeDeliveryAddress: (state, action) => {
+            state.deliveryFee = {...action.payload};
+        }
     },
 });
 
@@ -64,6 +72,7 @@ export const {
     increaseCount,
     decreaseCount,
     setIsCartOpen,
+    changeDeliveryAddress
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

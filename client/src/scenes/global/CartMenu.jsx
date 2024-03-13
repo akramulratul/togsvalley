@@ -1,12 +1,13 @@
-import {Box, Button, Divider, IconButton, Typography} from "@mui/material";
+import {Box, Divider, IconButton, Typography} from "@mui/material";
 import {useDispatch, useSelector} from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import styled from "@emotion/styled";
 import {shades} from "../../theme";
-import {decreaseCount, increaseCount, removeFromCart, setIsCartOpen,} from "../../state";
-import {useNavigate} from "react-router-dom";
+import {changeDeliveryAddress, decreaseCount, increaseCount, removeFromCart, setIsCartOpen,} from "../../state";
+import {Link, useLocation, useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
 
 const FlexBox = styled(Box)`
     display: flex;
@@ -18,9 +19,24 @@ const CartMenu = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart.cart);
+    const deliAddress = useSelector((state) => state.cart.deliveryFee);
     const isCartOpen = useSelector((state) => state.cart.isCartOpen);
+    const [deliveryFee, setDeliveryFee] = useState(deliAddress);
+    const location = useLocation();
+
+    // useEffect(() => {
+    //     dispatch(setIsCartOpen({}));
+    // }, [location])
+
+
+    useEffect(() => {
+        dispatch(changeDeliveryAddress(deliveryFee));
+    }, [deliveryFee, dispatch]);
+
 
     const totalPrice = cart.reduce((total, item) => {
+        if (item.attributes.DiscountedPrice !== 'null' && item.attributes.DiscountedPrice > 0)
+            return total + item.count * (item.attributes.price - (item.attributes.price * (item?.attributes?.DiscountedPrice / 100)));
         return total + item.count * item.attributes.price;
     }, 0);
     return (
@@ -68,9 +84,9 @@ const CartMenu = () => {
                                         </Box>
                                         <Box flex="1 1 60%">
                                             <FlexBox mb="5px">
-                                                <Typography fontWeight="bold">
+                                                <Link to={`/item/${item.id}`} className='text-base font-semibold'>
                                                     {item.attributes.name}
-                                                </Typography>
+                                                </Link>
                                                 <IconButton
                                                     onClick={() =>
                                                         dispatch(removeFromCart({id: item.id}))
@@ -79,7 +95,18 @@ const CartMenu = () => {
                                                     <CloseIcon/>
                                                 </IconButton>
                                             </FlexBox>
-                                            {/*<Typography>{item.attributes.shortDescription}</Typography>*/}
+
+                                            {
+                                                item?.attributes?.DiscountedPrice !== null && item?.attributes?.DiscountedPrice > 0 ?
+                                                    <div
+                                                        className='flex items-center gap-x-3 text-center '>
+                                                        <s><p className='text-sm'>৳ {item.attributes.price}</p></s>
+                                                        <p className='text-base'>৳ {item.attributes.price - (item.attributes.price * (item?.attributes?.DiscountedPrice / 100))}</p>
+                                                    </div>
+                                                    :
+                                                    <p className='text-base'>৳ {item.attributes.price}</p>
+                                            }
+
                                             <FlexBox m="15px 0">
                                                 <Box
                                                     display="flex"
@@ -103,7 +130,12 @@ const CartMenu = () => {
                                                     </IconButton>
                                                 </Box>
                                                 <Typography fontWeight="bold">
-                                                    $ {item.attributes.price}
+                                                    {
+                                                        item?.attributes?.DiscountedPrice !== null && item?.attributes?.DiscountedPrice > 0 ?
+                                                            <p>৳ {(item.attributes.price - (item.attributes.price * (item?.attributes?.DiscountedPrice / 100))) * item.count}</p>
+                                                            :
+                                                            <p>৳ {item.attributes.price * item.count}</p>
+                                                    }
                                                 </Typography>
                                             </FlexBox>
                                         </Box>
@@ -118,54 +150,65 @@ const CartMenu = () => {
                             <div className="grid grid-cols-2  items-center justify-between py-7">
                                 <p>Delivery Fee</p>
                                 <div className="flex flex-col">
-                                    <div className="grid grid-cols-5 gap-x-5 gap-y-3">
+                                    <form className="grid grid-cols-5 gap-x-5 gap-y-3">
                                         <label htmlFor="inside-dhaka" className="cursor-pointer text-right col-span-4">
                                             Inside Dhaka: <span
                                             className='text-primary font-semibold'>৳60</span></label>
                                         <div className="flex justify-end">
-                                            <input type="radio" name="delivery-fee"
+                                            <input onClick={() => setDeliveryFee({
+                                                    address: "inside-dhaka",
+                                                    price: '60'
+                                                }
+                                            )} type="radio" name="delivery-fee"
+                                                   value={60}
                                                    className="radio radio-sm radio-primary"
-                                                   id="inside-dhaka" checked/></div>
+                                                   id="inside-dhaka" defaultChecked/></div>
                                         <label htmlFor="outside-dhaka" className="cursor-pointer col-span-4 text-right">Outside
                                             Dhaka: <span className='text-primary font-semibold'>৳120</span></label>
                                         <div className="flex justify-end">
-                                            <input type="radio" name="delivery-fee"
+                                            <input onClick={() => setDeliveryFee({
+                                                    address: "outside-dhaka",
+                                                    price: '120'
+                                                }
+                                            )} type="radio" name="delivery-fee"
+                                                   value={120}
                                                    className="radio radio-sm radio-primary"
                                                    id="outside-dhaka"/>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
                         }
                         {/* ACTIONS */}
-                        <Box className="border-t ">
-                            <FlexBox m="20px 0">
-                                <Typography fontWeight="bold">SUBTOTAL</Typography>
-                                <Typography fontWeight="bold">৳{totalPrice}</Typography>
-                            </FlexBox>
-                            <Button
-                                sx={{
-                                    backgroundColor: shades.primary[400],
-                                    "&:hover": {
-                                        backgroundColor: "#7e7e7e", // Lighter green on hover
-                                    },
-                                    color: "white",
-                                    borderRadius: 0,
-                                    minWidth: "100%",
-                                    padding: "20px 40px",
-                                    m: "20px 0",
-                                }}
-                                onClick={() => {
-                                    navigate("/checkout");
-                                    dispatch(setIsCartOpen({}));
-                                }}
+                        <div className="border-t text-sm flex flex-col">
+
+                            <div className='flex justify-between my-5'>
+                                <div className="flex flex-col gap-y-1 justify-end">
+
+                                    <p className='font-bold text-base mt-2'>SUBTOTAL</p>
+                                </div>
+                                {
+                                    cart.length === 0 ?
+                                        <p className='font-bold'>৳{totalPrice}</p> :
+                                        <p className='font-bold '>৳{totalPrice + +deliAddress.price}</p>
+                                }
+
+                            </div>
+                            <button className='btn btn-primary w-full text-white font-medium mt-5 rounded-none'
+                                    onClick={() => {
+                                        navigate("/checkout");
+                                        dispatch(setIsCartOpen({}));
+                                    }}
                             >
                                 CHECKOUT
-                            </Button>
-                        </Box>
+                            </button>
+
+                        </div>
                     </Box>
                 </Box>
             </div>
+
+
         </Box>
     );
 };
