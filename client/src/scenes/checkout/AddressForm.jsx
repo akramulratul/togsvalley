@@ -29,7 +29,6 @@ const AddressForm = ({
 
   useEffect(() => {
     setThanas(address.upazilasOf(values.city));
-    // console.log(address.upazilasOf(values.city))
   }, [values]);
 
   const formattedError = (field) =>

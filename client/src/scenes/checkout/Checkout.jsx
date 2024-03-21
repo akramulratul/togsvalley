@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
 import { Formik } from "formik";
@@ -8,13 +9,16 @@ import { useNavigate } from "react-router-dom";
 import Title from "../../components/Title";
 import { useDispatch } from "react-redux";
 import { clearCart } from "../../state/index";
+import PaymentSuccessModal from "./PaymentSuccessModal";
 
 const Checkout = () => {
   const cart = useSelector((state) => state.cart.cart);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
   const handleFormSubmit = async (values, actions) => {
-    console.log("city name", values);
+    // console.log("city name", values);
     // Assuming your Strapi endpoint is http://localhost:1337/api/orders
     const strapiEndpoint = "http://localhost:1337/api/orders";
     const { billingAddress, shippingAddress, email, phoneNumber, address } =
@@ -46,7 +50,7 @@ const Checkout = () => {
     const requestBody = { data: orderData };
 
     // Log the requestBody to the console
-    console.log("Request Body:", requestBody);
+    // console.log("Request Body:", requestBody);
 
     try {
       const response = await fetch(strapiEndpoint, {
@@ -68,7 +72,7 @@ const Checkout = () => {
       const responseData = await response.json();
       console.log("Successfully posted data to Strapi:", responseData);
       dispatch(clearCart());
-      navigate("/success");
+      setShowSuccessModal(true);
       // Perform any follow-up actions after successful submission
       // For example, navigate to a different page or show a success message
     } catch (error) {
@@ -79,6 +83,11 @@ const Checkout = () => {
     actions.setTouched({});
   };
 
+  // Function to close the success modal and potentially navigate home
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    navigate("/"); // Optional: navigate to the homepage or another page
+  };
   return (
     <Box width="80%" m="100px auto">
       <Title title="Checkout" />
@@ -112,22 +121,9 @@ const Checkout = () => {
           )}
         </Formik>
       </Box>
-      {/* <dialog id="paymentSuccess" className="modal">
-        <div className="modal-box py-20 flex flex-col items-center">
-          <img src={accepted} className="w-36" alt="" />
-          <p className="py-4 text-xl">Your payment has been completed!</p>
-          <div className="modal-action">
-            <form method="dialog">
-              <button
-                onClick={() => navigate("/")}
-                className="btn btn-primary text-white font-normal"
-              >
-                Back to home
-              </button>
-            </form>
-          </div>
-        </div>
-      </dialog> */}
+      {showSuccessModal && (
+        <PaymentSuccessModal onClose={handleCloseSuccessModal} />
+      )}
     </Box>
   );
 };
