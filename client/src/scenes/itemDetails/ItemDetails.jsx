@@ -181,14 +181,14 @@ const ItemDetails = () => {
             <Box m="20px 0" className='px-5 lg:px-0'>
                 <Tabs value={value} onChange={handleChange}>
                     <Tab label="DESCRIPTION" value="description" className="text-base"/>
-                    <Tab label="REVIEWS" value="reviews" className="text-base"/>
+                    {/* <Tab label="REVIEWS" value="reviews" className="text-base"/> */}
                 </Tabs>
             </Box>
             <Box display="flex" flexWrap="wrap" gap="15px" className='px-5 lg:px-0'>
                 {value === "description" && (
                     <div>{item?.attributes?.longDescription}</div>
                 )}
-                {value === "reviews" && <div>reviews</div>}
+                {/* {value === "reviews" && <div>reviews</div>} */}
             </Box>
 
             {/* RELATED ITEMS */}
