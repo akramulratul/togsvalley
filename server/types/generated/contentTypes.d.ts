@@ -889,6 +889,7 @@ export interface ApiOrderOrder extends Schema.CollectionType {
     singularName: 'order';
     pluralName: 'orders';
     displayName: 'Order';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -896,7 +897,11 @@ export interface ApiOrderOrder extends Schema.CollectionType {
   attributes: {
     products: Attribute.JSON;
     userName: Attribute.String;
-    stripeSessionID: Attribute.String;
+    email: Attribute.String;
+    city: Attribute.String;
+    thana: Attribute.String;
+    phoneNumber: Attribute.String;
+    address: Attribute.Text;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
