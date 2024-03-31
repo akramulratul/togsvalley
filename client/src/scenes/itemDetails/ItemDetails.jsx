@@ -117,7 +117,7 @@ const ItemDetails = () => {
                                 :
                                 <p className='text-base'>৳ {item?.attributes?.price}</p>
                         }
-                        <p className="my-5">{item?.attributes?.longDescription}</p>
+                        <p className="my-5">{item?.attributes?.shortDescription}</p>
                     </div>
 
                     {itemData?.attributes?.AvailableProduct < 1 ? (
