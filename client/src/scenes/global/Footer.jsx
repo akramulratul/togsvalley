@@ -21,9 +21,8 @@ function Footer() {
 
                     </div>
 
-                    <div className='flex justify-center '>
+                    <div className='flex lg:justify-center '>
                         <div className="flex flex-col">
-
                             <p className='font-semibold text-base lg:mb-10 mb-5'>
                                 Our Products
                             </p>
