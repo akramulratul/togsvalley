@@ -5,7 +5,14 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import styled from "@emotion/styled";
 import {shades} from "../../theme";
-import {changeDeliveryAddress, decreaseCount, increaseCount, removeFromCart, setIsCartOpen,} from "../../state";
+import {
+    changeDeliveryAddress,
+    closeCart,
+    decreaseCount,
+    increaseCount,
+    removeFromCart,
+    setIsCartOpen,
+} from "../../state";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 
@@ -24,9 +31,9 @@ const CartMenu = () => {
     const [deliveryFee, setDeliveryFee] = useState(deliAddress);
     const location = useLocation();
 
-    // useEffect(() => {
-    //     dispatch(setIsCartOpen({}));
-    // }, [location])
+    useEffect(() => {
+        dispatch(closeCart());
+    }, [location])
 
 
     useEffect(() => {
@@ -41,7 +48,7 @@ const CartMenu = () => {
     }, 0);
     return (
         <Box
-            // display={isCartOpen ? "block" : "none"}
+
             backgroundColor="rgba(0, 0, 0, 0.4)"
             position="fixed"
 
@@ -162,7 +169,8 @@ const CartMenu = () => {
                                             )} type="radio" name="delivery-fee"
                                                    value={60}
                                                    className="radio radio-sm radio-primary"
-                                                   id="inside-dhaka" defaultChecked/></div>
+                                                   id="inside-dhaka" checked={deliAddress.address === 'inside-dhaka'}/>
+                                        </div>
                                         <label htmlFor="outside-dhaka" className="cursor-pointer col-span-4 text-right">Outside
                                             Dhaka: <span className='text-primary font-semibold'>৳120</span></label>
                                         <div className="flex justify-end">
@@ -173,37 +181,38 @@ const CartMenu = () => {
                                             )} type="radio" name="delivery-fee"
                                                    value={120}
                                                    className="radio radio-sm radio-primary"
-                                                   id="outside-dhaka"/>
+                                                   id="outside-dhaka"
+                                                   checked={deliAddress.address === 'outside-dhaka'}/>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         }
-                        {/* ACTIONS */}
-                        <div className="border-t text-sm flex flex-col">
+                        {/* Actions */}
+                        {
+                            cart.length !== 0 &&
+                            <div className="border-t text-sm flex flex-col">
+                                <div className='flex justify-between my-5'>
+                                    <div className="flex flex-col gap-y-1 justify-end">
 
-                            <div className='flex justify-between my-5'>
-                                <div className="flex flex-col gap-y-1 justify-end">
-
-                                    <p className='font-bold text-base mt-2'>SUBTOTAL</p>
+                                        <p className='font-bold text-base mt-2'>SUBTOTAL</p>
+                                    </div>
+                                    {
+                                        cart.length === 0 ?
+                                            <p className='font-bold'>৳{totalPrice}</p> :
+                                            <p className='font-bold '>৳{totalPrice + +deliAddress.price}</p>
+                                    }
                                 </div>
-                                {
-                                    cart.length === 0 ?
-                                        <p className='font-bold'>৳{totalPrice}</p> :
-                                        <p className='font-bold '>৳{totalPrice + +deliAddress.price}</p>
-                                }
-
+                                <button className='btn btn-primary w-full text-white font-medium mt-5 rounded-none'
+                                        onClick={() => {
+                                            navigate("/checkout");
+                                            dispatch(setIsCartOpen({}));
+                                        }}
+                                >
+                                    CHECKOUT
+                                </button>
                             </div>
-                            <button className='btn btn-primary w-full text-white font-medium mt-5 rounded-none'
-                                    onClick={() => {
-                                        navigate("/checkout");
-                                        dispatch(setIsCartOpen({}));
-                                    }}
-                            >
-                                CHECKOUT
-                            </button>
-
-                        </div>
+                        }
                     </Box>
                 </Box>
             </div>

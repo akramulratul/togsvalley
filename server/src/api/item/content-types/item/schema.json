@@ -66,6 +66,11 @@
     "DiscountedPrice": {
       "type": "integer",
       "default": 0
+    },
+    "sizes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::size.size"
     }
   }
 }

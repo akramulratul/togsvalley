@@ -10,6 +10,7 @@ import useFetch from "../../hooks/useFetch";
 import {Carousel} from "react-responsive-carousel";
 import "./ItemDetails.scss";
 import Title from "../../components/Title";
+import {capitalizeText} from "../categoryProduct/CategoryProduct";
 
 const API_URL = process.env.REACT_APP_API_URL;
 const UPLOAD_URL = process.env.REACT_APP_UPLOAD_URL;
@@ -21,7 +22,6 @@ const ItemDetails = () => {
     const [item, setItem] = useState(null);
     const [items, setItems] = useState([]);
 
-    const [currentSliderItem, setCurrentSliderItem] = useState();
 
     // Fetch item and items details using useFetch or fetch
     const {
@@ -48,6 +48,7 @@ const ItemDetails = () => {
     useEffect(() => {
         if (itemData) setItem(itemData);
         if (itemsData) setItems(itemsData);
+        console.log(itemData);
     }, [itemData, itemsData]);
 
     // Handle loading and error states for item and items
@@ -125,24 +126,46 @@ const ItemDetails = () => {
                             Out of Stock
                         </p>
                     ) : (
-                        <div className="flex gap-x-5">
-                            <div className="join border text-white rounded-sm">
-                                <button
-                                    onClick={() => setCount(Math.max(count - 1, 0))}
-                                    className="join-item btn text-primary hover:bg-primary hover:text-white duration-150 border-transparent bg-white text-xl"
-                                >
-                                    <i className="bi bi-dash"></i>
-                                </button>
-                                <p className="text-base  flex items-center join-item w-10 justify-center px-2 bg-white text-primary">
-                                    {count}
-                                </p>
-                                <button
-                                    onClick={() => setCount(count + 1)}
-                                    className="border-none join-item btn-outline bg-white text-primary hover:bg-primary hover:text-white duration-150 border-transparent btn text-xl "
-                                >
-                                    <i className="bi bi-plus"></i>
-                                </button>
+                        <div className="flex flex-col gap-5 lg:w-[20%]">
+                            <div className="flex flex-col gap-5">
+
+                                <div className="flex flex-col">
+                                    <label htmlFor="size" className='uppercase font-medium text-base tracking-widest'>
+                                        Size
+                                    </label>
+                                    <select id="size"
+                                            className="select select-bordered border-gray-300 rounded-none focus:outline-0">
+                                        {
+                                            itemData?.attributes?.sizes?.data.map((s, i) => <option key={i}
+                                                                                                    value={s?.attributes?.title}>
+                                                {capitalizeText(s?.attributes?.title)}
+                                            </option>)
+                                        }
+                                    </select>
+                                </div>
+                                {/*<div className="flex gap-x-5">*/}
+                                <div className="flex flex-col">
+                                    <p className='uppercase font-medium text-base tracking-widest'>Quantity</p>
+                                    <div className="join border text-white rounded-sm ">
+                                        <button
+                                            onClick={() => setCount(Math.max(count - 1, 0))}
+                                            className="join-item btn text-primary hover:bg-primary hover:text-white duration-150 border-transparent bg-white text-xl"
+                                        >
+                                            <i className="bi bi-dash"></i>
+                                        </button>
+                                        <p className="text-base flex-grow flex items-center join-item w-10 justify-center px-2 bg-white text-primary">
+                                            {count}
+                                        </p>
+                                        <button
+                                            onClick={() => setCount(count + 1)}
+                                            className="border-none join-item btn-outline bg-white text-primary hover:bg-primary hover:text-white duration-150 border-transparent btn text-xl "
+                                        >
+                                            <i className="bi bi-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
+
                             <button
                                 onClick={() => {
                                     dispatch(addToCart({item: {...item, count}}));
@@ -152,6 +175,7 @@ const ItemDetails = () => {
                             >
                                 <i className="bi bi-cart"></i>Add To Cart
                             </button>
+                            {/*</div>*/}
                         </div>
                     )}
 
